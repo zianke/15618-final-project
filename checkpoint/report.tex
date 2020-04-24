@@ -1,7 +1,7 @@
 %!TEX TS-program = xelatex
 
 \documentclass{article}
-
+\usepackage{enumerate}
 \input{PomonaLgcsFormatting}
 
 \title{Parallel implementation of zlib compression \& decompression}
@@ -14,31 +14,62 @@
 
 \maketitle
 
-\section{Current Progress}
-
-
+\section{Current Progress and Possible Adjustments}
+The following things have been done (or in progress):
+\begin{enumerate}[(1)]
+    \item According to schedule, we have read the source code for the Go implementation of \href{https://github.com/golang/go/tree/master/src/compress/zlib}{zlib} as well as the source code of \href{https://github.com/klauspost/pgzip}{pgzip}, since they are written in Go, the language of our choice, and thus will provide us much more guidance on the project. Due to the difference between gzip and zlib specifications, we have also read \href{https://tools.ietf.org/html/rfc1950}{RFC 1950} for zlib and \href{https://tools.ietf.org/html/rfc1952}{RFC 1952} for gzip since gzip is an implemantation based on gzip and we need to understand the differences.
+    \item Also according to schedule, we have implemented the compressor (writer) and have starting testing with some simple cases (text files) today Apr 24. 
+\end{enumerate}
+Some changes we would like to introduce on our future schedule:
+\begin{enumerate}[(1)]
+    \item We noticed that some descriptions on the project schedule may be incorrect. Instead of only implementing DEFLATE and INFLATE algorithms we are actually implementing the compressor(writer) that uses the DEFLATE algorithm and the decompressor(reader) that uses the INFLATE algorithm, so we'd like to make corrections to some of our task descriptions.
+    \item We noticed that putting correctness test and debugging after implementing the complete program may cause the debugging process to be more complex, so based on the principle of Incremental Development, we decided to split testing into blocks, with one after implementing the decompressor and one after implementing the compressor.
+\end{enumerate}
 \section{Future Schedule}
 \begin{table}[!hbp]
 \begin{center}
-\begin{tabular}{|c|c|}
+\begin{tabular}{|c|c|c|}
 \hline
- & Task \\ \hline
-4/16-4/18 & Reviewing sequential zlib algorithms \\ \hline
-4/19-4/23 & Implementation of parallel DEFLATE \\ \hline
-4/24 & Checkpoint report \\ \hline
-4/25-4/27 & Implementation of parallel INFLATE \\ \hline
-4/28-4/30 & Correctness testing \& Debugging \\ \hline
-5/1-5/2 & Datasets collection \& Benchmarks \\ \hline
-5/3-5/4 & Final report \\ \hline
-5/5 & Presentation \\ \hline
+ & Task & By\\ \hline
+4/25-4/28 & Implementation of parallel decompressor using INFLATE & Zian Ke \\ \hline
+4/25-4/27 & Correctness testing \& Debugging for compressor & Pengyun Zhao\\ \hline
+4/28-4/29 & Datasets collection & Zian Ke \\ \hline
+4/28-4/30 & Correctness testing \& Debugging for decompressor & Pengyun Zhao\\ \hline
+4/30-5/2 & Benchmarks & Team \\hline
+5/3-5/4 & Final report & Team\\ \hline
+5/5 & Presentation & Team\\ \hline
 \end{tabular}
 \end{center}
 \end{table}
-
+A gantt chart of the timeline is as follows:
+\newpage
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width = 15cm]{gantt.png}
+        \caption{Gantt Chart for Future Project Schedule}
+    \end{center}
+\end{figure}
 \section{Deliverables}
+Based on the fact that our current progress is going along quite well with our schedule, we think we will be able to achiveve the goals we plan to achieve stated in the project proposal. As for the "nice to haves", proving the efficiency and open source release are still challenging goals as they require a lot of work such as a diverse collection of datasets and use cases as well as detailed documentation and user support, but those goals are a good way to keep us motivated.\\
+Also since now AWS is also offered as an option, we are interested in the program performance on different types of machines (GHC, Latedays, AWS) with different number and type of cores, and we want to include in the "nice to haves" in our goals.\\
+So the new goals we plan to achive are:
+\begin{itemize}
+    \item Implement a parallelized version of zlib in Go that produces correct compression and decompression results and is fully compatible with the standard Go zlib package, i.e.,  the data compressed by our parallel zlib can be decompressed by the standard zlib, and vice versa.
+    \item Achieve noticeable speedup compared to the original sequential implementation.
+    \item Have a comprehensive analysis on the implementation for different kinds of workloads. What are the new bottlenecks? What kind(s) of workload is suited for the parallel implementation?
+\end{itemize}
 
+\noindent Goals that we hope to achieve:
+\begin{itemize}
+    \item Achieve similar performance (or even better) with the currently released versions of parallel implementations.
+    \item Prove the efficiency of parallel zlib in real-world applications such as large file compression and transport.
+    \item Aim for open source release as a third-party Go package.
+    \item \textbf{Analyze the program's performance on different machines. On which machines does the program have a higher performance, on which ones does it have a lower performance? What environment is it more suited for?}
+\end{itemize}
 \section{Presentation}
-
+We plan to present a combination of demonstrations as well as charts and graphs.\\
+Demonstrations are used to showcase the correctness of our program, i.e. it follows the zlib standard correctly and produces exactly same output (both decompression and compression).\\
+Charts and graphs are used to represent the program's performance characteristics on different workloads and different machines and will help us present our analysis.
 \section{Preliminary Results}
 
 \section{Issues}
