@@ -17,12 +17,12 @@
 \section{Current Progress and Possible Adjustments}
 The following things have been done (or in progress):
 \begin{enumerate}[(1)]
-    \item According to schedule, we have read the source code for the Go implementation of \href{https://github.com/golang/go/tree/master/src/compress/zlib}{zlib} as well as the source code of \href{https://github.com/klauspost/pgzip}{pgzip}, since they are written in Go, the language of our choice, and thus will provide us much more guidance on the project. Due to the difference between gzip and zlib specifications, we have also read \href{https://tools.ietf.org/html/rfc1950}{RFC 1950} for zlib and \href{https://tools.ietf.org/html/rfc1952}{RFC 1952} for gzip since gzip is an implemantation based on gzip and we need to understand the differences.
-    \item Also according to schedule, we have implemented the compressor (writer) and have starting testing with some simple cases (text files) today Apr 24. 
+    \item According to schedule, we have read the source code for the Go implementation of \href{https://github.com/golang/go/tree/master/src/compress/zlib}{zlib} as well as the source code of \href{https://github.com/klauspost/pgzip}{pgzip}, since they are written in Go, the language of our choice, and thus will provide us much more guidance on the project. Due to the difference between gzip and zlib specifications, we have also read \href{https://tools.ietf.org/html/rfc1950}{RFC 1950} for zlib and \href{https://tools.ietf.org/html/rfc1952}{RFC 1952} for gzip since zlib and gzip are both based on the DEFLATE algorithm and we need to understand the differences.
+    \item Also according to schedule, we have implemented the compressor (Writer in Go) and have written some basic test cases to verify its correctness. One of the tests is to compress a string with our parallel zlib, then decompress it with the standard zlib decompressor. The output string is exactly the same as input. This ensures that our parallel zlib compressor is compatible with the standard zlib decompressor in Go. 
 \end{enumerate}
 Some changes we would like to introduce on our future schedule:
 \begin{enumerate}[(1)]
-    \item We noticed that some descriptions on the project schedule may be incorrect. Instead of only implementing DEFLATE and INFLATE algorithms we are actually implementing the compressor(writer) that uses the DEFLATE algorithm and the decompressor(reader) that uses the INFLATE algorithm, so we'd like to make corrections to some of our task descriptions.
+    \item We noticed that some descriptions on the project schedule may be incorrect. Instead of only implementing DEFLATE and INFLATE algorithms we are actually implementing the compressor (writer) that uses the DEFLATE algorithm and the decompressor (reader) that uses the INFLATE algorithm. The DEFLATE and INFLATE algorithms are encapsulated by the Go ``compress/flate'' package, though some extra methods, e.g., ResetDict(), will need to be exposed to our implementation. Therefore, we'd like to make corrections to some of our task descriptions.
     \item We noticed that putting correctness test and debugging after implementing the complete program may cause the debugging process to be more complex, so based on the principle of Incremental Development, we decided to split testing into blocks, with one after implementing the decompressor and one after implementing the compressor.
 \end{enumerate}
 \section{Future Schedule}
@@ -35,7 +35,7 @@ Some changes we would like to introduce on our future schedule:
 4/25-4/27 & Correctness testing \& Debugging for compressor & Pengyun Zhao\\ \hline
 4/28-4/29 & Datasets collection & Zian Ke \\ \hline
 4/28-4/30 & Correctness testing \& Debugging for decompressor & Pengyun Zhao\\ \hline
-4/30-5/2 & Benchmarks & Team \\hline
+4/30-5/2 & Benchmarks & Team\\ \hline
 5/3-5/4 & Final report & Team\\ \hline
 5/5 & Presentation & Team\\ \hline
 \end{tabular}
