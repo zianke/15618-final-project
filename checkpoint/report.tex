@@ -49,10 +49,13 @@ A gantt chart of the timeline is as follows:
         \caption{Gantt Chart for Future Project Schedule}
     \end{center}
 \end{figure}
+
 \section{Deliverables}
-Based on the fact that our current progress is going along quite well with our schedule, we think we will be able to achiveve the goals we plan to achieve stated in the project proposal. As for the "nice to haves", proving the efficiency and open source release are still challenging goals as they require a lot of work such as a diverse collection of datasets and use cases as well as detailed documentation and user support, but those goals are a good way to keep us motivated.\\
-Also since now AWS is also offered as an option, we are interested in the program performance on different types of machines (GHC, Latedays, AWS) with different number and type of cores, and we want to include in the "nice to haves" in our goals.\\
-So the new goals we plan to achive are:
+Based on the fact that our current progress is going along quite well with our schedule, we think we will be able to achiveve the goals we plan to achieve stated in the project proposal. As for the ``nice to haves'', proving the efficiency and open source release are still challenging goals as they require a lot of work such as a diverse collection of datasets and use cases as well as detailed documentation and user support, but those goals are a good way to keep us motivated.
+
+\noindent Also since now AWS is also offered as an option, we are interested in the program performance on different types of machines (GHC, Latedays, AWS) with different number and type of cores, and we want to include in the ``nice to haves'' in our goals.
+
+\noindent So the new goals we plan to achieve are:
 \begin{itemize}
     \item Implement a parallelized version of zlib in Go that produces correct compression and decompression results and is fully compatible with the standard Go zlib package, i.e.,  the data compressed by our parallel zlib can be decompressed by the standard zlib, and vice versa.
     \item Achieve noticeable speedup compared to the original sequential implementation.
@@ -66,13 +69,19 @@ So the new goals we plan to achive are:
     \item Aim for open source release as a third-party Go package.
     \item \textbf{Analyze the program's performance on different machines. On which machines does the program have a higher performance, on which ones does it have a lower performance? What environment is it more suited for?}
 \end{itemize}
+
 \section{Presentation}
-We plan to present a combination of demonstrations as well as charts and graphs.\\
-Demonstrations are used to showcase the correctness of our program, i.e. it follows the zlib standard correctly and produces exactly same output (both decompression and compression).\\
-Charts and graphs are used to represent the program's performance characteristics on different workloads and different machines and will help us present our analysis.
+We plan to present a combination of demonstrations as well as charts and graphs.
+
+\noindent Demonstrations are used to showcase the correctness of our program, i.e. it follows the zlib standard correctly and produces exactly same output (both decompression and compression).
+
+\noindent Charts and graphs are used to represent the program's performance characteristics on different workloads and different machines and will help us present our analysis.
+
 \section{Preliminary Results}
+Based on our current implementation and testings, we have ensured that with a parallel zlib compressor that spawns multiple gorountines and compress multiple blocks concurrently, the correctness can still be guaranteed, i.e., the compressed result is fully compatible with a non-parallel zlib decompressor. We are also pretty sure that our parallel zlib compressor satisfies the requirement on \href{https://tools.ietf.org/html/rfc1950}{RFC 1950}, as we are strictly following the definitions of header,  checksum, etc., by taking the implementations of the standard zlib package in Go as reference.
 
 \section{Issues}
+A minor issue we currently have is about writing test cases. We planned to reuse the test cases in the standard zlib package in Go, as our implementation is expected to be compatible with it. However, those test cases have a dependency on the ``internal/testenv'' package, while Go does not allow third party packages to import internal packages. Hence we'll need to fully understand the standard zlib test cases and attempt to reimplement them, and also add more test cases, e.g., to test concurrency.
 
 \end{document}
 
