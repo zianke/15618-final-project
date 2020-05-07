@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
-	pzlib2 "pgzip-test/pzlib-std"
 	"testing"
 )
 
@@ -73,7 +72,7 @@ func benchmarkGeneral(i int, b *testing.B) {
 		}
 	})
 
-	b.Run("zlib2", func(b *testing.B) {
+	b.Run("klauspost/compress/zlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
 		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
@@ -92,18 +91,6 @@ func benchmarkGeneral(i int, b *testing.B) {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := pzlib.NewWriterLevel(&buf, 6)
-			io.Copy(w, br)
-			w.Close()
-		}
-	})
-
-	b.Run("pzlib2", func(b *testing.B) {
-		b.SetBytes(int64(len(testbuf)))
-		b.ResetTimer()
-		for n := 0; n < b.N; n++ {
-			br := bytes.NewBuffer(testbuf)
-			var buf bytes.Buffer
-			w, _ := pzlib2.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
 		}
