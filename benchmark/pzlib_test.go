@@ -5,11 +5,11 @@ import (
 	"compress/zlib"
 	"fmt"
 	zlib2 "github.com/klauspost/compress/zlib"
+	"github.com/zianke/pzlib"
 	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
-	"pgzip-test/pzlib"
 	pzlib2 "pgzip-test/pzlib-std"
 	"testing"
 )
