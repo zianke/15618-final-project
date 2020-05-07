@@ -59,69 +59,64 @@ func generateDuplicate(size int) []byte {
 	return testbuf
 }
 
-func benchmarkJson(i int, b *testing.B) {
+func benchmarkGeneral(i int, b *testing.B) {
 	testbuf := generateJson(i)
-
 	b.Run("zlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := zlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
 	b.Run("zlib2", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := zlib2.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib2.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
 	b.Run("pzlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := pzlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := pzlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
 	b.Run("pzlib2", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := pzlib2.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := pzlib2.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 }
 
-func BenchmarkJson1K(b *testing.B)   { benchmarkJson(1000, b) }
-func BenchmarkJson10K(b *testing.B)  { benchmarkJson(10000, b) }
-func BenchmarkJson100K(b *testing.B) { benchmarkJson(100000, b) }
-func BenchmarkJson1M(b *testing.B)   { benchmarkJson(1000000, b) }
-func BenchmarkJson10M(b *testing.B)  { benchmarkJson(10000000, b) }
-func BenchmarkJson100M(b *testing.B) { benchmarkJson(100000000, b) }
-func BenchmarkJson1G(b *testing.B)   { benchmarkJson(1000000000, b) }
+func BenchmarkGeneral1K(b *testing.B)   { benchmarkGeneral(1000, b) }
+func BenchmarkGeneral10K(b *testing.B)  { benchmarkGeneral(10000, b) }
+func BenchmarkGeneral100K(b *testing.B) { benchmarkGeneral(100000, b) }
+func BenchmarkGeneral1M(b *testing.B)   { benchmarkGeneral(1000000, b) }
+func BenchmarkGeneral10M(b *testing.B)  { benchmarkGeneral(10000000, b) }
+func BenchmarkGeneral100M(b *testing.B) { benchmarkGeneral(100000000, b) }
+func BenchmarkGeneral1G(b *testing.B)   { benchmarkGeneral(1000000000, b) }
 
 func BenchmarkFileSize(b *testing.B) {
 	for _, fileSize := range []int{1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000} {
@@ -129,20 +124,20 @@ func BenchmarkFileSize(b *testing.B) {
 
 		b.Run(fmt.Sprintf("zlib-%d", fileSize), func(b *testing.B) {
 			b.SetBytes(int64(len(testbuf)))
+			b.ResetTimer()
 			for n := 0; n < b.N; n++ {
 				br := bytes.NewBuffer(testbuf)
 				var buf bytes.Buffer
 				w, _ := zlib.NewWriterLevel(&buf, 6)
 				io.Copy(w, br)
 				w.Close()
-				r, _ := zlib.NewReader(&buf)
-				ioutil.ReadAll(r)
 			}
 		})
 
 		for _, threadNum := range []int{1, 2, 4, 8, 16, 32, 64} {
 			b.Run(fmt.Sprintf("pzlib-%d-%d", fileSize, threadNum), func(b *testing.B) {
 				b.SetBytes(int64(len(testbuf)))
+				b.ResetTimer()
 				for n := 0; n < b.N; n++ {
 					br := bytes.NewBuffer(testbuf)
 					var buf bytes.Buffer
@@ -150,8 +145,6 @@ func BenchmarkFileSize(b *testing.B) {
 					w.SetConcurrency(1<<20, threadNum)
 					io.Copy(w, br)
 					w.Close()
-					r, _ := pzlib.NewReader(&buf)
-					ioutil.ReadAll(r)
 				}
 			})
 		}
@@ -163,21 +156,21 @@ func BenchmarkBlockSize(b *testing.B) {
 
 	b.Run("zlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := zlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
-	for _, blockSize := range []int{1 << 14, 1 << 16, 1 << 18, 1 << 20, 1 << 22, 1 << 24} {
+	for _, blockSize := range []int{1 << 15, 1 << 16, 1 << 18, 1 << 20, 1 << 22, 1 << 24} {
 		for _, threadNum := range []int{1, 2, 4, 8, 16, 32, 64} {
 			b.Run(fmt.Sprintf("pzlib-%d-%d", blockSize, threadNum), func(b *testing.B) {
 				b.SetBytes(int64(len(testbuf)))
+				b.ResetTimer()
 				for n := 0; n < b.N; n++ {
 					br := bytes.NewBuffer(testbuf)
 					var buf bytes.Buffer
@@ -185,8 +178,6 @@ func BenchmarkBlockSize(b *testing.B) {
 					w.SetConcurrency(blockSize, threadNum)
 					io.Copy(w, br)
 					w.Close()
-					r, _ := pzlib.NewReader(&buf)
-					ioutil.ReadAll(r)
 				}
 			})
 		}
@@ -204,8 +195,6 @@ func benchmarkLevel(level int, b *testing.B) {
 		w, _ := pzlib.NewWriterLevel(&buf, level)
 		io.Copy(w, br)
 		w.Close()
-		r, _ := pzlib.NewReader(&buf)
-		ioutil.ReadAll(r)
 	}
 }
 
@@ -229,6 +218,16 @@ func testLevel(level int, t *testing.T) {
 	w.Close()
 
 	log.Printf("[Level %d] Original size: %d bytes; Size after compression: %d bytes", level, len(testbuf), len(buf.Bytes()))
+
+	testbuf = generateJson(100000000)
+
+	br = bytes.NewBuffer(testbuf)
+	var buf2 bytes.Buffer
+	w2, _ := zlib.NewWriterLevel(&buf2, level)
+	io.Copy(w2, br)
+	w2.Close()
+
+	log.Printf("[Level %d zlib] Original size: %d bytes; Size after compression: %d bytes", level, len(testbuf), len(buf2.Bytes()))
 }
 
 func TestLevel1(t *testing.T) { testLevel(1, t) }
@@ -246,27 +245,25 @@ func BenchmarkDuplicate(b *testing.B) {
 
 	b.Run("zlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := zlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
 	b.Run("pzlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := pzlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := pzlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 }
@@ -294,27 +291,25 @@ func BenchmarkRandom(b *testing.B) {
 
 	b.Run("zlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := zlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
 	b.Run("pzlib", func(b *testing.B) {
 		b.SetBytes(int64(len(testbuf)))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			br := bytes.NewBuffer(testbuf)
 			var buf bytes.Buffer
 			w, _ := pzlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := pzlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 }
@@ -348,8 +343,6 @@ func BenchmarkJson(b *testing.B) {
 			w, _ := zlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
@@ -361,8 +354,6 @@ func BenchmarkJson(b *testing.B) {
 			w, _ := pzlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := pzlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 }
@@ -396,8 +387,6 @@ func BenchmarkText(b *testing.B) {
 			w, _ := zlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := zlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 
@@ -409,8 +398,6 @@ func BenchmarkText(b *testing.B) {
 			w, _ := pzlib.NewWriterLevel(&buf, 6)
 			io.Copy(w, br)
 			w.Close()
-			r, _ := pzlib.NewReader(&buf)
-			ioutil.ReadAll(r)
 		}
 	})
 }
